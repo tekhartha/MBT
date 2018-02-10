@@ -78,7 +78,6 @@ void readyQueue::searchAndDestroy(int searchPID, int *fBlocks, bool *arr)
 
 /*
 	Clears ready queue and reallocates all memory back to MBT.
-	This is not actually working. Why??? I am using the code from above which works...
 */
 
 void readyQueue::deleteQueue(int *fBlocks, bool *arr)
@@ -149,4 +148,21 @@ void readyQueue::printQueue()
 bool readyQueue::isEmpty()
 {
 	return (head == NULL);
+}
+
+bool readyQueue::pidInList(int x)
+{
+	PCB *temp = head;
+	while (temp != NULL)
+	{
+		if (temp->PID == x)
+		{
+			return true;
+		}
+		else
+		{
+			temp = temp->next;
+		}
+	}
+	return false;
 }

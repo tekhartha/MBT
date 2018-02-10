@@ -28,7 +28,7 @@ struct PCB
 			{
 				if (j % x == i)
 				{
-					cout << setw(4) << left << j << " | " << *(pageTable + j) << "\t";
+					cout << setw(4) << left << j << "| " << *(pageTable + j) << "\t";
 				}
 			}
 			cout << "\n";
@@ -43,12 +43,12 @@ class readyQueue
 		PCB *head, *tail;
 	public:
 		readyQueue();
-		void push(int x);
 		void push(PCB *x);
 		void printQueue();
 		void searchAndDestroy(int searchPID, int *fBlocks, bool *arr);
 		void deleteQueue(int *fBlocks, bool *arr);
 		bool isEmpty();
+		bool pidInList(int x);
 };
 
 #endif

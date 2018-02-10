@@ -29,14 +29,12 @@ int main()
 	/*
 		Initialize ready queue.
 	*/
-
 	readyQueue readyqueue;
 
 	/*
 		All these variables are here because Visual Studio screamed at me when I put them inside the switch statements
 		which makes sense since you wouldn't want to initialize them every time you go through the loop but this looks ugly :(
 	*/
-
 	PCB *temp;
 	int myPID;
 	int blocksReq;
@@ -45,10 +43,10 @@ int main()
 	bool *boolPtr = myMBT.boolArray;
 	char exitProgram;
 	int x = 1024/16;
+
 	/*
 		Menu interactions.
-	*/
-	
+	*/	
 	bool exit = false;
 	int choice = 0;
 
@@ -71,6 +69,11 @@ int main()
 				*/
 				cout << "Enter a unique PID for this process.\n";
 				cin >> myPID;
+				while (readyqueue.pidInList(myPID))
+				{
+					cout << "\nPID already exists in queue. Enter another: \n";
+					cin >> myPID;
+				}
 				temp->PID = myPID;
 
 				/*
@@ -83,67 +86,70 @@ int main()
 					cout << "There is not enough space in the MBT. Cannot add process to queue.\n";
 					break;
 				}
-				temp->pageTableSize = blocksReq;
+				else
+				{
+					temp->pageTableSize = blocksReq;
 
-				/*
+					/*
 					Create page table that represents the location of each process block in the MBT.
-				*/
-				myPageTable = new int[blocksReq];
-				temp->pageTable = myPageTable;
+					*/
+					myPageTable = new int[blocksReq];
+					temp->pageTable = myPageTable;
 
-				/*
+					/*
 					Iterate through MBT to find free (TRUE) blocks, and record index into page table.
-				*/
+					*/
 
-				for (int i = 0; i < blocksReq; i++)
-				{
-					for (int j = 0; j < 1024; j++)
+					for (int i = 0; i < blocksReq; i++)
 					{
-						if (myMBT.boolArray[j] == true)
-						{
-							temp->pageTable[i] = j;
-							myMBT.boolArray[j] = false; // Set corresponding MBT block to occupied (false).
-							break;
-						}
-					}
-				}
-				
-				myMBT.freeBlocks -= blocksReq;
-				cout << "There are now " << myMBT.freeBlocks << " free blocks left.\n";
-
-				/*
-					Push PCB into readyqueue.
-				*/
-				readyqueue.push(temp);
-
-				/*
-					Output page table and MBT for verification.
-				*/
-				cout << "Printing page table...\n";
-				temp->printPageTable();
-				cout << "\n";
-
-				/*
-					WARNING: HUGE AND UGLY. Also I'm too lazy to put this another method. Sorry
-				*/
-				cout << "Printing MBT...\n";
-				for (int i = 0; i < x; i++)
-				{
-					for (int j = 0; j < 1024; j++)
-					{
-						if (j % x == i)
+						for (int j = 0; j < 1024; j++)
 						{
 							if (myMBT.boolArray[j] == true)
 							{
-								cout << setw(4) << left << j << "| " << "T" << "   ";
-							}
-							else
-							{
-								cout << setw(4) << left << j << "| " << "F" << "   ";
+								temp->pageTable[i] = j;
+								myMBT.boolArray[j] = false; // Set corresponding MBT block to occupied (false).
+								break;
 							}
 						}
 					}
+
+					myMBT.freeBlocks -= blocksReq;
+					cout << "There are now " << myMBT.freeBlocks << " free blocks left.\n";
+
+					/*
+					Push PCB into readyqueue.
+					*/
+					readyqueue.push(temp);
+
+					/*
+					Output page table and MBT for verification.
+					*/
+					cout << "Printing page table...\n";
+					temp->printPageTable();
 					cout << "\n";
+
+					/*
+					WARNING: HUGE AND UGLY. Also I'm too lazy to put this in another method. Sorry
+					*/
+					cout << "Printing MBT...\n";
+					for (int i = 0; i < x; i++)
+					{
+						for (int j = 0; j < 1024; j++)
+						{
+							if (j % x == i)
+							{
+								if (myMBT.boolArray[j] == true)
+								{
+									cout << setw(4) << left << j << "| " << "T" << "   ";
+								}
+								else
+								{
+									cout << setw(4) << left << j << "| " << "F" << "   ";
+								}
+							}
+						}
+						cout << "\n";
+					}
 				}
 
 				break;
@@ -201,10 +207,10 @@ int main()
 					}
 					cout << "\n";
 				}
+
 				/*
 					If ready queue is not empty, user must confirm that they want to exit program.
 				*/
-
 				if (!readyqueue.isEmpty())
 				{
 					cout << "\nThe queue is not empty. Are you sure you want to exit? (Y/N)\n";
@@ -212,7 +218,7 @@ int main()
 					if (exitProgram == 'Y' || exitProgram == 'y')
 					{
 						cout << "\nDeleting all dynamically allocated memory...\n";
-						readyqueue.deleteQueue(&(myMBT.freeBlocks), boolPtr); // This doesn't work yet
+						readyqueue.deleteQueue(&(myMBT.freeBlocks), boolPtr);
 
 						//readyqueue.printQueue();
 
