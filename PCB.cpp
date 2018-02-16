@@ -33,6 +33,15 @@ void readyQueue::push(PCB *x)
 }
 
 /*
+	Returns PID of head of queue (if it exists).
+*/
+int readyQueue::headPID()
+{
+	return head->PID;
+}
+
+
+/*
 	User inputs PID of PCB to be removed from readyqueue.
 	If no PCB has matching PID, nothing occurs.
 	I'm not sure how this works but it does and that's that.
@@ -47,7 +56,7 @@ void readyQueue::searchAndDestroy(int searchPID, int *fBlocks, bool *arr)
 	{
 		if (temp->PID == searchPID)
 		{
-			cout << "\nProcess found. Deallocating memory blocks...\n";
+			//cout << "\nProcess found. Deallocating memory blocks...\n";
 			*fBlocks += temp->pageTableSize;
 			
 			for (int i = 0; i < temp->pageTableSize; i++)
@@ -77,7 +86,7 @@ void readyQueue::searchAndDestroy(int searchPID, int *fBlocks, bool *arr)
 }
 
 /*
-	Clears ready queue and reallocates all memory back to MBT.
+	This doesn't actually work but I will leave it here anyway.
 */
 
 void readyQueue::deleteQueue(int *fBlocks, bool *arr)

@@ -45,8 +45,9 @@ class readyQueue
 		readyQueue();
 		void push(PCB *x);
 		void printQueue();
+		int headPID();
 		void searchAndDestroy(int searchPID, int *fBlocks, bool *arr);
-		void deleteQueue(int *fBlocks, bool *arr);
+		void deleteQueue(int *fBlocks, bool *arr); // This doesn't actually work but I will leave it here anyway.
 		bool isEmpty();
 		bool pidInList(int x);
 };

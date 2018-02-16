@@ -43,6 +43,7 @@ int main()
 	bool *boolPtr = myMBT.boolArray;
 	char exitProgram;
 	int x = 1024/16;
+	int currPID;
 
 	/*
 		Menu interactions.
@@ -79,6 +80,7 @@ int main()
 				/*
 					Random int from 10-250 generated for number of blocks required by process.
 				*/
+				srand(time(NULL));
 				blocksReq = rand() % 241 + 10;
 				cout << "This process will require " << blocksReq << " blocks in the MBT.\n";
 				if (blocksReq > myMBT.freeBlocks)
@@ -114,7 +116,6 @@ int main()
 					}
 
 					myMBT.freeBlocks -= blocksReq;
-					cout << "There are now " << myMBT.freeBlocks << " free blocks left.\n";
 
 					/*
 					Push PCB into readyqueue.
@@ -150,6 +151,8 @@ int main()
 						}
 						cout << "\n";
 					}
+
+					cout << "\nThere are now " << myMBT.freeBlocks << " free blocks left.\n";
 				}
 
 				break;
@@ -164,6 +167,7 @@ int main()
 				{
 					cout << "\nPrinting PIDS...\n";
 					readyqueue.printQueue();
+					//cout << "\n" << readyqueue.headPID() << "\n";
 				}
 				break;
 
@@ -177,7 +181,7 @@ int main()
 				cout << "\nEnter the PID of the PCB to be deleted.\n";
 				cin >> findPID;
 				readyqueue.searchAndDestroy(findPID, &(myMBT.freeBlocks), boolPtr);
-				//cout << myMBT.freeBlocks;
+				cout << "\nThere are now " << myMBT.freeBlocks << " free blocks.\n";
 				break;
 
 			case 4:
@@ -218,9 +222,18 @@ int main()
 					if (exitProgram == 'Y' || exitProgram == 'y')
 					{
 						cout << "\nDeleting all dynamically allocated memory...\n";
-						readyqueue.deleteQueue(&(myMBT.freeBlocks), boolPtr);
-
-						//readyqueue.printQueue();
+						//readyqueue.deleteQueue(&(myMBT.freeBlocks), boolPtr); // EVIL! does not work
+						/*
+							Had to implement workaround for deleting entire queue... 
+							While the queue is not empty, return PID of head, and use
+							existing searchAndDestroy method to delete each node
+						*/
+						while (!readyqueue.isEmpty())
+						{
+							currPID = readyqueue.headPID();
+							readyqueue.searchAndDestroy(currPID, &(myMBT.freeBlocks), boolPtr);
+						}
+						//readyqueue.printQueue(); // this doesn't print anything, which is correct since queue is empty now
 
 						system("pause");
 						exit = true;
