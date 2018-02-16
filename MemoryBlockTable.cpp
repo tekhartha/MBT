@@ -222,7 +222,9 @@ int main()
 					if (exitProgram == 'Y' || exitProgram == 'y')
 					{
 						cout << "\nDeleting all dynamically allocated memory...\n";
+						
 						//readyqueue.deleteQueue(&(myMBT.freeBlocks), boolPtr); // EVIL! does not work
+						
 						/*
 							Had to implement workaround for deleting entire queue... 
 							While the queue is not empty, return PID of head, and use
